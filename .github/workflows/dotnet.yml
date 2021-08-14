@@ -1,4 +1,3 @@
-
 name: .NET
 
 on:
@@ -27,4 +26,4 @@ jobs:
     - name: Pack
       run: dotnet pack --configuration Release
     - name: Push to Nuget
-      #run: dotnet nuget push "MyProj/bin/Release/MyProj.7.0.0.nupkg"  --api-key ${{ secrets.NUGETKEY }} --source "https://api.nuget.org/v3/index.json"
+      run: dotnet nuget push "FluentAssertions.BUnit/bin/Release/*.nupkg"  --api-key ${{ secrets.NUGETKEY }} --source "https://api.nuget.org/v3/index.json"
