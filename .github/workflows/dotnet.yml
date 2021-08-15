@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  MAJOR_VERSION: 0
+  MINOR_VERSION: 0
+  PATCH_VERSION: ${{ github.run_number }}
+  VERSION: format("{0}.{1}.{2}", env.MAJOR_VERSION, env.MINOR_VERSION, PATCH_VERSION)
+
 jobs:
   build:
 
@@ -20,10 +26,10 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore --configuration Release
+      run: dotnet build --no-restore --configuration Release /p:Version=${{ env.VERSION }}
     - name: Test
       run: dotnet test --verbosity normal
     - name: Pack
       run: dotnet pack --configuration Release
     - name: Push to Nuget
-      run: dotnet nuget push "FluentAssertions.BUnit/bin/Release/*.nupkg" --source "https://api.nuget.org/v3/index.json" --api-key ${{ secrets.NUGETKEY }}
+      run: dotnet nuget push "FluentAssertions.BUnit/bin/Release/*.nupkg" --source "https://api.nuget.org/v3/index.json" --api-key ${{ secrets.NUGETKEY }} -p:PackageVersion=${{ env.VERSION }}
