@@ -26,7 +26,7 @@ Use bUnit to render component.
 
 Then write assertions...
 
-```
+```csharp
     [Fact]
     public void RenderWithChildContent()
     {
