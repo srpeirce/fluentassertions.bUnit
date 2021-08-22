@@ -10,7 +10,8 @@ env:
   MAJOR_VERSION: 0
   MINOR_VERSION: 0
   PATCH_VERSION: ${{ github.run_number }}
-  VERSION: format("{0}.{1}.{2}", env.MAJOR_VERSION, env.MINOR_VERSION, PATCH_VERSION)
+  NUGET_FEED: https://api.nuget.org/v3/index.json
+  NUGET_KEY: ${{ secrets.NUGETKEY }}
 
 jobs:
   build:
@@ -26,10 +27,10 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore --configuration Release /p:Version=${{ env.VERSION }}
+      run: dotnet build --no-restore --configuration Release /p:Version='${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}.${{ env.PATCH_VERSION }}'
     - name: Test
       run: dotnet test --verbosity normal
     - name: Pack
-      run: dotnet pack --configuration Release
-    - name: Push to Nuget
-      run: dotnet nuget push "FluentAssertions.BUnit/bin/Release/*.nupkg" --source "https://api.nuget.org/v3/index.json" --api-key ${{ secrets.NUGETKEY }} -p:PackageVersion=${{ env.VERSION }}
+      run: dotnet pack --configuration Release --include-symbols --include-source --no-build /p:PackageVersion='${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}.${{ env.PATCH_VERSION }}' -o nupkg FluentAssertions.BUnit
+    - name: Push to NuGet Feed
+      run: dotnet nuget push ./nupkg/*.nupkg --source $NUGET_FEED --api-key $NUGET_KEY --skip-duplicate
