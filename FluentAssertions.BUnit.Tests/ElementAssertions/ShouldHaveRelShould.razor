@@ -1,0 +1,47 @@
+@using Xunit
+@using FluentAssertions.BUnit
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void ReturnElement()
+    {
+        var element = Render(@<a href="#" rel="nofollow noopener">Link</a>).AsElement();
+        
+        var returnedElement = element.ShouldHaveRel("nofollow");
+
+        returnedElement.Should().Be(element);
+    }
+
+    [Theory]
+    [InlineData("nofollow")]
+    [InlineData("noopener")]
+    public void SucceedWhenHasRel(string expected)
+    {
+        Render(@<a href="#" rel="nofollow noopener">Link</a>)
+            .AsElement()
+            .ShouldHaveRel(expected);
+    }
+    
+    [Fact]
+    public void ThrowExceptionWhenHasIncorrectRel()
+    {
+        Action aut = () => Render(@<a href="#" rel="noopener">Link</a>)
+            .AsElement()
+            .ShouldHaveRel("nofollow");
+
+        aut.Should().Throw<XunitException>();
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenDoesNotHaveAnyRel()
+    {
+        Action aut = () => Render(@<a href="#">Link</a>)
+                            .AsElement()
+                            .ShouldHaveRel("nofollow");
+
+        aut.Should().Throw<XunitException>();
+    }
+}

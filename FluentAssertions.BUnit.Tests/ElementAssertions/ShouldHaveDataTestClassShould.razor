@@ -1,0 +1,45 @@
+@using Xunit
+@using FluentAssertions.BUnit
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void ReturnElement()
+    {
+        var element = Render(@<button data-test-class="magic-button">Click Me</button>).AsElement();
+        
+        var returnedElement = element.ShouldHaveDataTestClass("magic-button");
+
+        returnedElement.Should().Be(element);
+    }
+
+    [Fact]
+    public void SucceedWhenDataTestClassMatches()
+    {
+        Render(@<button data-test-class="magic-button">Click Me</button>)
+            .AsElement()
+            .ShouldHaveDataTestClass("magic-button");
+    }
+    
+    [Fact]
+    public void ThrowExceptionWhenDataTestClassDoesNotMatch()
+    {
+        Action aut = () => Render(@<button data-test-class="magic-button">Click Me</button>)
+            .AsElement()
+            .ShouldHaveDataTestClass("button");
+
+        aut.Should().Throw<XunitException>();
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenDataTestClassIsMissing()
+    {
+        Action aut = () => Render(@<button>Click Me</button>)
+                            .AsElement()
+                            .ShouldHaveDataTestClass("magic-button");
+
+        aut.Should().Throw<XunitException>();
+    }
+}

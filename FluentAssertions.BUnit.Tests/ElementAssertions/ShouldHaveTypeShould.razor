@@ -1,0 +1,45 @@
+@using Xunit
+@using FluentAssertions.BUnit
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void ReturnElement()
+    {
+        var element = Render(@<button type="button">Click me</button>).AsElement();
+        
+        var returnedElement = element.ShouldHaveType("button");
+
+        returnedElement.Should().Be(element);
+    }
+
+    [Fact]
+    public void SucceedWhenTypeMatches()
+    {
+        Render(@<button type="button">Click me</button>)
+            .AsElement()
+            .ShouldHaveType("button");
+    }
+    
+    [Fact]
+    public void ThrowExceptionWhenTypeDoesNotMatch()
+    {
+        Action aut = () => Render(@<button type="link">Click me</button>)
+            .AsElement()
+            .ShouldHaveType("button");
+
+        aut.Should().Throw<XunitException>();
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenDoesNotHaveType()
+    {
+        Action aut = () => Render(@<button>Click me</button>)
+                            .AsElement()
+                            .ShouldHaveType("button");
+
+        aut.Should().Throw<XunitException>();
+    }
+}
