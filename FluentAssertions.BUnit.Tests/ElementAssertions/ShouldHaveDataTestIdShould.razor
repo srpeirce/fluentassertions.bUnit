@@ -1,0 +1,45 @@
+@using Xunit
+@using FluentAssertions.BUnit
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void ReturnElement()
+    {
+        var element = Render(@<button data-test-id="special-button">Click Me</button>).AsElement();
+        
+        var returnedElement = element.ShouldHaveDataTestId("special-button");
+
+        returnedElement.Should().Be(element);
+    }
+
+    [Fact]
+    public void SucceedWhenHasDataTestId()
+    {
+        Render(@<button data-test-id="special-button">Click Me</button>)
+            .AsElement()
+            .ShouldHaveDataTestId("special-button");
+    }
+    
+    [Fact]
+    public void ThrowExceptionWhenDataTestIdDoesNotMatch()
+    {
+        Action aut = () => Render(@<button data-test-id="special-button">Click Me</button>)
+            .AsElement()
+            .ShouldHaveDataTestId("button");
+
+        aut.Should().Throw<XunitException>();
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenDataTestIdIsMissing()
+    {
+        Action aut = () => Render(@<button>Click Me</button>)
+                            .AsElement()
+                            .ShouldHaveDataTestId("special-button");
+
+        aut.Should().Throw<XunitException>();
+    }
+}

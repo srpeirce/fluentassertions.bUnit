@@ -1,0 +1,45 @@
+@using Xunit
+@using FluentAssertions.BUnit
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void ReturnElement()
+    {
+        var element = Render(@<img src="/logo.png" alt="Logo">).AsElement();
+        
+        var returnedElement = element.ShouldHaveAttribute("src", "/logo.png");
+
+        returnedElement.Should().Be(element);
+    }
+
+    [Fact]
+    public void SucceedWhenSrcMatches()
+    {
+        Render(@<img src="/logo.png" alt="Logo">)
+            .AsElement()
+            .ShouldHaveAttribute("src", "/logo.png");
+    }
+    
+    [Fact]
+    public void ThrowExceptionWhenSrcDoesNotMatch()
+    {
+        Action aut = () => Render(@<img src="/logo.png" alt="Logo">)
+            .AsElement()
+            .ShouldHaveAttribute("src", "/oops.png");
+
+        aut.Should().Throw<XunitException>();
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenDoesNotHaveSrc()
+    {
+        Action aut = () => Render(@<img alt="Logo">)
+                            .AsElement()
+                            .ShouldHaveAttribute("src", "/logo.png");
+
+        aut.Should().Throw<XunitException>();
+    }
+}
