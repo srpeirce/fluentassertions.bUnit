@@ -1,0 +1,53 @@
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void ReturnElementWhenTopLevelComponent()
+    {
+        var renderedFragment = Render(@<button data-test-class="my-button">Click me</button>);
+
+        var elements = renderedFragment.FindAllByDataTestClass("my-button");
+
+        elements.Should().HaveCount(1);
+        var element = elements.First();
+        element.MarkupMatches(@<button data-test-class="my-button">Click me</button>);
+    }
+    
+    [Fact]
+    public void ReturnElementWhenNestedComponent()
+    {
+        var renderedFragment = Render(@<div><button data-test-class="my-button">Click me</button></div>);
+
+        var elements = renderedFragment.FindAllByDataTestClass("my-button");
+
+        elements.Should().HaveCount(1);
+        var element = elements.First();
+        element.MarkupMatches(@<button data-test-class="my-button">Click me</button>);
+    }
+    
+    [Fact]
+    public void ReturnAllElementWhenMultipleMatchingComponents()
+    {
+        var renderedFragment = Render(@<div>
+                                          <button data-test-class="my-button">Click me 1</button>
+                                          <button data-test-class="my-button">Click me 2</button>
+                                      </div>);
+
+        var elements = renderedFragment.FindAllByDataTestClass("my-button");
+
+        elements.Should().HaveCount(2);
+        elements[0].MarkupMatches(@<button data-test-class="my-button">Click me 1</button>);
+        elements[1].MarkupMatches(@<button data-test-class="my-button">Click me 2</button>);
+    }
+    
+    [Fact]
+    public void ReturnEmptyWhenNoMatchingComponents()
+    {
+        var renderedFragment = Render(@<div></div>);
+
+        var elements = renderedFragment.FindAllByDataTestClass("my-button");
+
+        elements.Should().BeEmpty();
+    }
+}

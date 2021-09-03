@@ -1,0 +1,15 @@
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void CastRenderedFragmentToElement()
+    {
+        var renderedFragment = Render(@<button data-test-class="my-button">Click me</button>);
+
+        var element = renderedFragment.AsElement();
+
+        element.Should().BeAssignableTo<IElement>();
+        element.MarkupMatches(@<button data-test-class="my-button">Click me</button>);
+    }
+}
