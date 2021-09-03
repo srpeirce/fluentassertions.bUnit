@@ -1,0 +1,40 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+
+    [Fact]
+    public void ReturnRenderedFragment()
+    {
+        var renderedFragment = Render(@<button data-test-id="special-button">Click Me</button>);
+
+        var returnedRenderedFragment = renderedFragment.ShouldHaveDataTestId("special-button");
+
+        returnedRenderedFragment.Should().Be(renderedFragment);
+    }
+
+    [Fact]
+    public void SucceedWhenHasDataTestId()
+    {
+        Render(@<button data-test-id="special-button">Click Me</button>)
+            .ShouldHaveDataTestId("special-button");
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenDataTestIdDoesNotMatch()
+    {
+        Action aut = () => Render(@<button data-test-id="special-button">Click Me</button>)
+            .ShouldHaveDataTestId("button");
+
+        aut.Should().Throw<XunitException>();
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenDataTestIdIsMissing()
+    {
+        Action aut = () => Render(@<button>Click Me</button>)
+            .ShouldHaveDataTestId("special-button");
+
+        aut.Should().Throw<XunitException>();
+    }
+}

@@ -1,0 +1,40 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+
+    [Fact]
+    public void ReturnRenderedFragment()
+    {
+        var renderedFragment = Render(@<a href="#" target="_blank">Link</a>);
+
+        var returnedRenderedFragment = renderedFragment.ShouldHaveTarget("_blank");
+
+        returnedRenderedFragment.Should().Be(renderedFragment);
+    }
+
+    [Fact]
+    public void SucceedWhenHasTarget()
+    {
+        Render(@<a href="#" target="_blank">Link</a>)
+            .ShouldHaveTarget("_blank");
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenHasIncorrectTarget()
+    {
+        Action aut = () => Render(@<a href="#" target="_self">Link</a>)
+            .ShouldHaveTarget("_blank");
+
+        aut.Should().Throw<XunitException>();
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenDoesNotHaveAnyTarget()
+    {
+        Action aut = () => Render(@<a href="#">Link</a>)
+            .ShouldHaveTarget("_blank");
+
+        aut.Should().Throw<XunitException>();
+    }
+}

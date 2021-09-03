@@ -1,0 +1,40 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+
+    [Fact]
+    public void ReturnRenderedFragment()
+    {
+        var renderedFragment = Render(@<a href="https://github.com/srpeirce/fluentassertions.bUnit">Link</a>);
+
+        var returnedRenderedFragment = renderedFragment.ShouldHaveHref("https://github.com/srpeirce/fluentassertions.bUnit");
+
+        returnedRenderedFragment.Should().Be(renderedFragment);
+    }
+
+    [Fact]
+    public void SucceedWhenHrefMatches()
+    {
+        Render(@<a href="https://github.com/srpeirce/fluentassertions.bUnit">Link</a>)
+            .ShouldHaveHref("https://github.com/srpeirce/fluentassertions.bUnit");
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenHrefDoesNotMatch()
+    {
+        Action aut = () => Render(@<a href="https://github.com/srpeirce/fluentassertions.bUnit">Link</a>)
+            .ShouldHaveHref("#");
+
+        aut.Should().Throw<XunitException>();
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenDoesNotHaveHref()
+    {
+        Action aut = () => Render(@<a>Link</a>)
+            .ShouldHaveHref("#");
+
+        aut.Should().Throw<XunitException>();
+    }
+}

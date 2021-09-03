@@ -1,0 +1,31 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+
+    [Fact]
+    public void ReturnRenderedFragment()
+    {
+        var renderedFragment = Render(@<button><h1>Test</h1></button>);
+
+        var returnedRenderedFragment = renderedFragment.ShouldHaveTag("button");
+
+        returnedRenderedFragment.Should().Be(renderedFragment);
+    }
+
+    [Fact]
+    public void SucceedWhenHasTag()
+    {
+        Render(@<button><h1>Test</h1></button>)
+            .ShouldHaveTag("button");
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenDoesNotHaveTag()
+    {
+        Action aut = () => Render(@<button><h1>Test</h1></button>)
+            .ShouldHaveTag("div");
+
+        aut.Should().Throw<XunitException>();
+    }
+}

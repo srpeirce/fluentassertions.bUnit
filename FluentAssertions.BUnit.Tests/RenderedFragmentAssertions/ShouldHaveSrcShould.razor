@@ -1,0 +1,40 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+
+    [Fact]
+    public void ReturnRenderedFragment()
+    {
+        var renderedFragment = Render(@<img src="/logo.png" alt="Logo">);
+
+        var returnedRenderedFragment = renderedFragment.ShouldHaveSrc("/logo.png");
+
+        returnedRenderedFragment.Should().Be(renderedFragment);
+    }
+
+    [Fact]
+    public void SucceedWhenSrcMatches()
+    {
+        Render(@<img src="/logo.png" alt="Logo">)
+            .ShouldHaveSrc("/logo.png");
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenSrcDoesNotMatch()
+    {
+        Action aut = () => Render(@<img src="/logo.png" alt="Logo">)
+            .ShouldHaveSrc("/oops.png");
+
+        aut.Should().Throw<XunitException>();
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenDoesNotHaveSrc()
+    {
+        Action aut = () => Render(@<img alt="Logo">)
+            .ShouldHaveSrc("/logo.png");
+
+        aut.Should().Throw<XunitException>();
+    }
+}
