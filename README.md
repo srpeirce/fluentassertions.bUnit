@@ -34,7 +34,7 @@ Then write assertions...
         
         cut.AsElement()
             .ShouldHaveTag("button")
-            .ShouldHaveChildMarkup("<h1>Test</h1>");
+            .ShouldHaveChildMarkup(@<h1>Test</h1>);
     }
 
     [Fact]
