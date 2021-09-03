@@ -1,5 +1,6 @@
 ﻿using AngleSharp.Dom;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 
 namespace FluentAssertions.BUnit
 {
@@ -12,6 +13,14 @@ namespace FluentAssertions.BUnit
         }
 
         public static IElement ShouldHaveChildMarkup(this IElement element, string expected)
+        {
+            var child = element.FirstChild;
+            child.Should().NotBeNull();    
+            child!.MarkupMatches(expected);
+            return element;
+        }
+        
+        public static IElement ShouldHaveChildMarkup(this IElement element, RenderFragment expected)
         {
             var child = element.FirstChild;
             child.Should().NotBeNull();    
