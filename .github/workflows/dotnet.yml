@@ -45,6 +45,6 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: dotnet pack
-      run: dotnet pack --configuration Release --include-symbols --include-source --no-build /p:PackageVersion='${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}.${{ env.PATCH_VERSION }}' -o nupkg FluentAssertions.BUnit
+      run: dotnet pack --configuration Release --include-symbols --include-source /p:PackageVersion='${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}.${{ env.PATCH_VERSION }}' -o nupkg FluentAssertions.BUnit
     - name: Push to NuGet Feed
       run: dotnet nuget push ./nupkg/*.nupkg --source $NUGET_FEED --api-key $NUGET_KEY --skip-duplicate
