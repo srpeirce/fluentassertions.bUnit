@@ -30,9 +30,7 @@ Then write assertions...
     [Fact]
     public void RenderWithChildContent()
     {
-        var cut = Render(@<Button><h1>Test</h1></Button>);
-        
-        cut.AsElement()
+        Render(@<Button><h1>Test</h1></Button>)
             .ShouldHaveTag("button")
             .ShouldHaveChildMarkup(@<h1>Test</h1>);
     }
@@ -40,9 +38,7 @@ Then write assertions...
     [Fact]
     public void SetDefaultCssClasses()
     {
-        var cut = Render(@<Button><h1>Test</h1></Button>);
-
-        cut.AsElement()
+        Render(@<Button><h1>Test</h1></Button>)
             .ShouldHaveClass("btn")
             .ShouldHaveClass("btn-primary")
             .ShouldNotHaveClass("btn-outline-success");

@@ -1,0 +1,34 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+
+    [Fact]
+    public void ReturnRenderedFragment()
+    {
+        var renderedFragment = Render(@<button Class="btn big cta"><h1>Test</h1></button>);
+
+        var returnedRenderedFragment = renderedFragment.ShouldHaveClass("cta");
+
+        returnedRenderedFragment.Should().Be(renderedFragment);
+    }
+
+    [Theory]
+    [InlineData("big")]
+    [InlineData("cta")]
+    [InlineData("btn")]
+    public void SucceedWhenHasClass(string expectedClass)
+    {
+        Render(@<button Class="btn big cta"><h1>Test</h1></button>)
+            .ShouldHaveClass(expectedClass);
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenDoesNotHaveClass()
+    {
+        Action aut = () => Render(@<button><h1>Test</h1></button>)
+            .ShouldHaveClass("big");
+
+        aut.Should().Throw<XunitException>();
+    }
+}

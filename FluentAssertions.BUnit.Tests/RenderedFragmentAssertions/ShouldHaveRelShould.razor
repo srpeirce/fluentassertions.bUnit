@@ -1,0 +1,42 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+
+    [Fact]
+    public void ReturnRenderedFragment()
+    {
+        var renderedFragment = Render(@<a href="#" rel="nofollow noopener">Link</a>);
+
+        var returnedRenderedFragment = renderedFragment.ShouldHaveRel("nofollow");
+
+        returnedRenderedFragment.Should().Be(renderedFragment);
+    }
+
+    [Theory]
+    [InlineData("nofollow")]
+    [InlineData("noopener")]
+    public void SucceedWhenHasRel(string expected)
+    {
+        Render(@<a href="#" rel="nofollow noopener">Link</a>)
+            .ShouldHaveRel(expected);
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenHasIncorrectRel()
+    {
+        Action aut = () => Render(@<a href="#" rel="noopener">Link</a>)
+            .ShouldHaveRel("nofollow");
+
+        aut.Should().Throw<XunitException>();
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenDoesNotHaveAnyRel()
+    {
+        Action aut = () => Render(@<a href="#">Link</a>)
+            .ShouldHaveRel("nofollow");
+
+        aut.Should().Throw<XunitException>();
+    }
+}
