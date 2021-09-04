@@ -2,38 +2,38 @@
 @inherits Bunit.TestContext
 
 @code {
-    
+
     [Fact]
     public void ReturnRenderedFragment()
     {
         var renderedFragment = Render(@<img src="/logo.png" alt="Logo">);
-        
-        var returnedRenderedFragment = renderedFragment.ShouldHaveAlt("Logo");
 
-        returnedRenderedFragment.Should().Be(renderedFragment);
+        var returnedRenderedFragment = renderedFragment.ShouldHaveSrc("/logo.png");
+
+        returnedRenderedFragment.Should().BeSameAs(renderedFragment);
     }
 
     [Fact]
-    public void SucceedWhenAltMatches()
+    public void SucceedWhenSrcMatches()
     {
         Render(@<img src="/logo.png" alt="Logo">)
-            .ShouldHaveAlt("Logo");
+            .ShouldHaveSrc("/logo.png");
     }
-    
+
     [Fact]
-    public void ThrowExceptionWhenAltDoesNotMatch()
+    public void ThrowExceptionWhenSrcDoesNotMatch()
     {
         Action aut = () => Render(@<img src="/logo.png" alt="Logo">)
-            .ShouldHaveAlt("Face");
+            .ShouldHaveSrc("/oops.png");
 
         aut.Should().Throw<XunitException>();
     }
 
     [Fact]
-    public void ThrowExceptionWhenDoesNotHaveAlt()
+    public void ThrowExceptionWhenDoesNotHaveSrc()
     {
-        Action aut = () => Render(@<img src="/logo.png">)
-            .ShouldHaveAlt("Logo");
+        Action aut = () => Render(@<img alt="Logo">)
+            .ShouldHaveSrc("/logo.png");
 
         aut.Should().Throw<XunitException>();
     }

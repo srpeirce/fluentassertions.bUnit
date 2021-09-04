@@ -10,7 +10,7 @@
 
         var returnedRenderedFragment = renderedFragment.ShouldHaveTarget("_blank");
 
-        returnedRenderedFragment.Should().Be(renderedFragment);
+        returnedRenderedFragment.Should().BeSameAs(renderedFragment);
     }
 
     [Fact]

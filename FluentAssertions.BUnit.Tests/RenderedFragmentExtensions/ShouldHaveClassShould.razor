@@ -10,7 +10,7 @@
 
         var returnedRenderedFragment = renderedFragment.ShouldHaveClass("cta");
 
-        returnedRenderedFragment.Should().Be(renderedFragment);
+        returnedRenderedFragment.Should().BeSameAs(renderedFragment);
     }
 
     [Theory]

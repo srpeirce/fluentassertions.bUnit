@@ -1,0 +1,22 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void SucceedWhenNull()
+    {
+        IRenderedFragment f = null;
+        
+        f.Should().BeNull();
+    }
+    
+    [Fact]
+    public void ThrowExceptionWhenNotNull()
+    {
+        Action aut = () => Render(@<img src="/logo.png" alt="Logo">)
+            .Should().BeNull();
+
+        aut.Should().Throw<XunitException>();
+    }
+}

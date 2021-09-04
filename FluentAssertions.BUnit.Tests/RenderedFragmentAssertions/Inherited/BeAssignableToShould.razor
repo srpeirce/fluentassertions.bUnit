@@ -1,0 +1,21 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void SucceedWhenAssignable()
+    {
+        Render(@<img src="/logo.png" alt="Logo">)
+            .Should().BeAssignableTo<IDisposable>();
+    }
+    
+    [Fact]
+    public void ThrowExceptionWhenNotAssignable()
+    {
+        Action aut = () => Render(@<img src="/logo.png" alt="Logo">)
+            .Should().BeAssignableTo<string>();
+
+        aut.Should().Throw<XunitException>();
+    }
+}
