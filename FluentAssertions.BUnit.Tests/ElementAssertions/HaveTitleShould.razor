@@ -1,0 +1,67 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void Succeed()
+    {
+        Render(@<a href="#" title="GitHub Repo">Link</a>)
+            .AsElement()
+            .Should().HaveTitle("GitHub Repo");
+    }
+    
+    [Fact]
+    public void ReturnAndConstraint()
+    {
+        var andConstraint = Render(@<a href="#" title="GitHub Repo">Link</a>)
+            .AsElement()
+            .Should().HaveTitle("GitHub Repo");
+
+        andConstraint.Should().BeOfType<AndConstraint<ElementAssertions>>();
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute()
+    {
+        Action aut = () => Render(@<a href="#">Link</a>)
+            .AsElement()
+            .Should().HaveTitle("GitHub Repo");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement to have attribute \"title\", but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<a href="#">Link</a>)
+            .AsElement()
+            .Should().HaveTitle("GitHub Repo", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement to have attribute \"title\" because this is very important to Steve, but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue()
+    {
+        Action aut = () => Render(@<a href="#" title="GH Repo">Link</a>)
+            .AsElement()
+            .Should().HaveTitle("GitHub Repo");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement \"title\" attribute to have value \"GitHub Repo\", but found \"GH Repo\".");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<a href="#" title="GH Repo">Link</a>)
+            .AsElement()
+            .Should().HaveTitle("GitHub Repo", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement \"title\" attribute to have value \"GitHub Repo\" because this is very important to Steve, but found \"GH Repo\".");
+    }
+}

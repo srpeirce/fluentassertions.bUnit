@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions.Primitives;
+﻿using AngleSharp.Dom;
+using Bunit;
 
 namespace FluentAssertions.BUnit
 {
@@ -8,6 +8,11 @@ namespace FluentAssertions.BUnit
         public static RenderedFragmentAssertions Should(this IRenderedFragment actualValue)
         {
             return new RenderedFragmentAssertions(actualValue);
+        }
+        
+        public static ElementAssertions Should(this IElement actualValue)
+        {
+            return new ElementAssertions(actualValue);
         }
     }
 }

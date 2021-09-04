@@ -10,7 +10,7 @@
         
         var returnedElement = element.ShouldHaveClass("cta");
 
-        returnedElement.Should().Be(element);
+        returnedElement.Should().BeSameAs(element);
     }
 
     [Theory]

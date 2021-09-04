@@ -1,0 +1,67 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void Succeed()
+    {
+        Render(@<button data-test-id="magic-button">Click Me</button>)
+            .AsElement()
+            .Should().HaveDataTestId("magic-button");
+    }
+    
+    [Fact]
+    public void ReturnAndConstraint()
+    {
+        var andConstraint = Render(@<button data-test-id="magic-button">Click Me</button>)
+            .AsElement()
+            .Should().HaveDataTestId("magic-button");
+
+        andConstraint.Should().BeOfType<AndConstraint<ElementAssertions>>();
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute()
+    {
+        Action aut = () => Render(@<button>Click Me</button>)
+            .AsElement()
+            .Should().HaveDataTestId("magic-button");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement to have attribute \"data-test-id\", but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<button>Click Me</button>)
+            .AsElement()
+            .Should().HaveDataTestId("magic-button", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement to have attribute \"data-test-id\" because this is very important to Steve, but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue()
+    {
+        Action aut = () => Render(@<button data-test-id="magic-btn">Click Me</button>)
+            .AsElement()
+            .Should().HaveDataTestId("magic-button");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement \"data-test-id\" attribute to have value \"magic-button\", but found \"magic-btn\".");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<button data-test-id="magic-btn">Click Me</button>)
+            .AsElement()
+            .Should().HaveDataTestId("magic-button", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement \"data-test-id\" attribute to have value \"magic-button\" because this is very important to Steve, but found \"magic-btn\".");
+    }
+}

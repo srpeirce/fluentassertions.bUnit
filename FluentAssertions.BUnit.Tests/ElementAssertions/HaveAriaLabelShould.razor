@@ -1,0 +1,67 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void Succeed()
+    {
+        Render(@<a href="#" aria-label="Home Page">Link</a>)
+            .AsElement()
+            .Should().HaveAriaLabel("Home Page");
+    }
+    
+    [Fact]
+    public void ReturnAndConstraint()
+    {
+        var andConstraint = Render(@<a href="#" aria-label="Home Page">Link</a>)
+            .AsElement()
+            .Should().HaveAriaLabel("Home Page");
+
+        andConstraint.Should().BeOfType<AndConstraint<ElementAssertions>>();
+    }
+
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute()
+    {
+        Action aut = () => Render(@<a href="#">Link</a>)
+            .AsElement()
+            .Should().HaveAriaLabel("Home Page");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement to have attribute \"aria-label\", but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<a href="#">Link</a>)
+            .AsElement()
+            .Should().HaveAriaLabel("Home Page", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement to have attribute \"aria-label\" because this is very important to Steve, but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue()
+    {
+        Action aut = () => Render(@<a href="#" aria-label="Home">Link</a>)
+            .AsElement()
+            .Should().HaveAriaLabel("Home Page");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement \"aria-label\" attribute to have value \"Home Page\", but found \"Home\".");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<a href="#" aria-label="Home">Link</a>)
+            .AsElement()
+            .Should().HaveAriaLabel("Home Page", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement \"aria-label\" attribute to have value \"Home Page\" because this is very important to Steve, but found \"Home\".");
+    }
+}

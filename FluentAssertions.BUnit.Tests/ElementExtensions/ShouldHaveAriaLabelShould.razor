@@ -10,7 +10,7 @@
         
         var returnedElement = element.ShouldHaveAriaLabel("Home Page");
 
-        returnedElement.Should().Be(element);
+        returnedElement.Should().BeSameAs(element);
     }
 
     [Fact]

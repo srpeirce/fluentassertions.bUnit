@@ -1,0 +1,67 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void Succeed()
+    {
+        Render(@<img src="/logo.png" alt="Logo">)
+            .AsElement()
+            .Should().HaveSrc("/logo.png");
+    }
+    
+    [Fact]
+    public void ReturnAndConstraint()
+    {
+        var andConstraint = Render(@<img src="/logo.png" alt="Logo">)
+            .AsElement()
+            .Should().HaveSrc("/logo.png");
+
+        andConstraint.Should().BeOfType<AndConstraint<ElementAssertions>>();
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute()
+    {
+        Action aut = () => Render(@<img alt="Logo">)
+            .AsElement()
+            .Should().HaveSrc("/logo.png");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement to have attribute \"src\", but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<img alt="Logo">)
+            .AsElement()
+            .Should().HaveSrc("/logo.png", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement to have attribute \"src\" because this is very important to Steve, but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue()
+    {
+        Action aut = () => Render(@<img src="/loog.png" alt="Logo">)
+            .AsElement()
+            .Should().HaveSrc("/logo.png");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement \"src\" attribute to have value \"/logo.png\", but found \"/loog.png\".");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<img src="/loog.png" alt="Logo">)
+            .AsElement()
+            .Should().HaveSrc("/logo.png", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement \"src\" attribute to have value \"/logo.png\" because this is very important to Steve, but found \"/loog.png\".");
+    }
+}

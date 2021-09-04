@@ -10,7 +10,7 @@
         
         var returnedElement = element.ShouldHaveSrc("/logo.png");
 
-        returnedElement.Should().Be(element);
+        returnedElement.Should().BeSameAs(element);
     }
 
     [Fact]

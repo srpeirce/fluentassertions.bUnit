@@ -10,7 +10,7 @@
         
         var returnedElement = element.ShouldHaveRel("nofollow");
 
-        returnedElement.Should().Be(element);
+        returnedElement.Should().BeSameAs(element);
     }
 
     [Theory]
