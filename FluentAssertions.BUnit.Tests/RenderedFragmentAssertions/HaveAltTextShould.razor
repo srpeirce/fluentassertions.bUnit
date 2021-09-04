@@ -1,0 +1,61 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void Succeed()
+    {
+        Render(@<img src="/logo.png" alt="Logo">)
+            .Should().HaveAltText("Logo");
+    }
+    
+    [Fact]
+    public void ReturnAndConstraint()
+    {
+        var andConstraint = Render(@<img src="/logo.png" alt="Logo">)
+            .Should().HaveAltText("Logo");
+
+        andConstraint.Should().BeOfType<AndConstraint<RenderedFragmentAssertions>>();
+    }
+
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute()
+    {
+        Action aut = () => Render(@<img src="/logo.png">)
+            .Should().HaveAltText("Logo");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment to have attribute \"alt\", but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<img src="/logo.png">)
+            .Should().HaveAltText("Logo", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment to have attribute \"alt\" because this is very important to Steve, but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue()
+    {
+        Action aut = () => Render(@<img src="/logo.png" alt="Log">)
+            .Should().HaveAltText("Logo");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment \"alt\" attribute to have value \"Logo\", but found \"Log\".");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<img src="/logo.png" alt="Log">)
+            .Should().HaveAltText("Logo", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment \"alt\" attribute to have value \"Logo\" because this is very important to Steve, but found \"Log\".");
+    }
+}

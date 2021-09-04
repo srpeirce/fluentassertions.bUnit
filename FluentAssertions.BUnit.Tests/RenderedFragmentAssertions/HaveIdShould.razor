@@ -1,0 +1,61 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void Succeed()
+    {
+        Render(@<button id="special-button">Click Me</button>)
+            .Should().HaveId("special-button");
+    }
+    
+    [Fact]
+    public void ReturnAndConstraint()
+    {
+        var andConstraint = Render(@<button id="special-button">Click Me</button>)
+            .Should().HaveId("special-button");
+
+        andConstraint.Should().BeOfType<AndConstraint<RenderedFragmentAssertions>>();
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute()
+    {
+        Action aut = () => Render(@<button>Click Me</button>)
+            .Should().HaveId("special-button");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment to have attribute \"id\", but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<button>Click Me</button>)
+            .Should().HaveId("special-button", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment to have attribute \"id\" because this is very important to Steve, but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue()
+    {
+        Action aut = () => Render(@<button id="special-btn">Click Me</button>)
+            .Should().HaveId("special-button");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment \"id\" attribute to have value \"special-button\", but found \"special-btn\".");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<button id="special-btn">Click Me</button>)
+            .Should().HaveId("special-button", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment \"id\" attribute to have value \"special-button\" because this is very important to Steve, but found \"special-btn\".");
+    }
+}
