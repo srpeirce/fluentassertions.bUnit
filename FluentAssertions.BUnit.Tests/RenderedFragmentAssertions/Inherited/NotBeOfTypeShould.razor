@@ -1,0 +1,24 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void SucceedWhenOfType()
+    {
+        Render(@<img src="/logo.png" alt="Logo">)
+            .Should().NotBeOfType<IRenderedFragment>();
+    }
+    
+    [Fact]
+    public void ThrowExceptionWhenNotOfType()
+    {
+        Action aut = () =>
+        {
+            var renderedFragment = Render(@<img src="/logo.png" alt="Logo">);
+            renderedFragment.Should().NotBeOfType(renderedFragment.GetType());
+        };
+
+        aut.Should().Throw<XunitException>();
+    }
+}

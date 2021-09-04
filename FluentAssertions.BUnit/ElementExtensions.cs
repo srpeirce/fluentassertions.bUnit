@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace FluentAssertions.BUnit
 {
-    public static class ElementAssertions
+    public static class ElementExtensions
     {
         public static IElement ShouldHaveTag(this IElement element, string expected)
         {

@@ -1,0 +1,26 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void SucceedWhenComparingToAnotherReference()
+    {
+        Render(@<img src="/logo.png" alt="Logo">)
+            .Should().NotBeSameAs(Render(@<img src="/logo.png" alt="Logo">));
+    }
+
+    [Fact]
+    public void ThrowExceptionWhenComparingToSameReference()
+    {
+        Action aut = () =>
+        {
+            var renderedFragment = Render(@<img src="/logo.png" alt="Logo">);
+
+            renderedFragment
+                .Should().NotBeSameAs(renderedFragment);
+        };
+
+        aut.Should().Throw<XunitException>();
+    }
+}

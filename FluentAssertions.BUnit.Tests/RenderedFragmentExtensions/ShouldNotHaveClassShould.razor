@@ -10,7 +10,7 @@
 
         var returnedRenderedFragment = renderedFragment.ShouldNotHaveClass("none");
 
-        returnedRenderedFragment.Should().Be(renderedFragment);
+        returnedRenderedFragment.Should().BeSameAs(renderedFragment);
     }
 
     [Fact]

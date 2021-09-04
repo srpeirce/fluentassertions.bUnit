@@ -1,0 +1,14 @@
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void BeSameAsRenderedFragment()
+    {
+        var renderedFragment = Render(@<img src="/logo.png" alt="Logo">);
+        
+        var subject = renderedFragment.Should().Subject;
+
+        subject.Should().BeAssignableTo<IRenderedFragment>().And.BeSameAs(renderedFragment);
+    }
+}

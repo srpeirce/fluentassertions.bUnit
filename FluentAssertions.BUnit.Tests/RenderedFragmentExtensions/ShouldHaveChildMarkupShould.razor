@@ -10,7 +10,7 @@
 
         var returnedRenderedFragment = renderedFragment.ShouldHaveChildMarkup("<h1>Test</h1>");
 
-        returnedRenderedFragment.Should().Be(renderedFragment);
+        returnedRenderedFragment.Should().BeSameAs(renderedFragment);
     }
 
     [Fact]
@@ -20,7 +20,7 @@
 
         var returnedRenderedFragment = renderedFragment.ShouldHaveChildMarkup(@<h1>Test</h1>);
 
-        returnedRenderedFragment.Should().Be(renderedFragment);
+        returnedRenderedFragment.Should().BeSameAs(renderedFragment);
     }
 
     [Fact]

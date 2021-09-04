@@ -1,0 +1,21 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void SucceedWhenMatches()
+    {
+        Render(@<img src="/logo.png" alt="Logo">)
+            .Should().Match(rf => rf.Markup.Contains("img"));
+    }
+    
+    [Fact]
+    public void ThrowExceptionWhenDoesNotMatch()
+    {
+        Action aut = () => Render(@<img src="/logo.png" alt="Logo">)
+            .Should().Match(rf => rf.Markup.Contains("div"));
+
+        aut.Should().Throw<XunitException>();
+    }
+}

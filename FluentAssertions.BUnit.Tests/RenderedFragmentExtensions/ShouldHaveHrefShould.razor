@@ -10,7 +10,7 @@
 
         var returnedRenderedFragment = renderedFragment.ShouldHaveHref("https://github.com/srpeirce/fluentassertions.bUnit");
 
-        returnedRenderedFragment.Should().Be(renderedFragment);
+        returnedRenderedFragment.Should().BeSameAs(renderedFragment);
     }
 
     [Fact]

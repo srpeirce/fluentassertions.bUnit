@@ -10,7 +10,7 @@
 
         var returnedRenderedFragment = renderedFragment.ShouldHaveType("button");
 
-        returnedRenderedFragment.Should().Be(renderedFragment);
+        returnedRenderedFragment.Should().BeSameAs(renderedFragment);
     }
 
     [Fact]

@@ -1,0 +1,15 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void ReturnRenderFragmentAssertion()
+    {
+        var renderedFragment = Render(@<img src="/logo.png" alt="Logo">);
+            
+        var renderedFragmentAssertion = renderedFragment.Should();
+        
+        renderedFragmentAssertion.Should().BeOfType<RenderedFragmentAssertions>();
+    }
+}
