@@ -31,17 +31,17 @@ Then write assertions...
     public void RenderWithChildContent()
     {
         Render(@<Button><h1>Test</h1></Button>)
-            .ShouldHaveTag("button")
-            .ShouldHaveChildMarkup(@<h1>Test</h1>);
+            .Should().HaveTag("button")
+            .And.HaveChildMarkup(@<h1>Test</h1>);
     }
 
     [Fact]
     public void SetDefaultCssClasses()
     {
         Render(@<Button><h1>Test</h1></Button>)
-            .ShouldHaveClass("btn")
-            .ShouldHaveClass("btn-primary")
-            .ShouldNotHaveClass("btn-outline-success");
+            .Should().HaveClass("btn")
+            .And.HaveClass("btn-primary")
+            .And.NotHaveClass("btn-outline-success");
     }
 ```
 

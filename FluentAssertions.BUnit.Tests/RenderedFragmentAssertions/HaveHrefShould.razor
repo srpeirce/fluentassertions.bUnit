@@ -1,0 +1,61 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void Succeed()
+    {
+        Render(@<a href="https://github.com/srpeirce/fluentassertions.bUnit">Link</a>)
+            .Should().HaveHref("https://github.com/srpeirce/fluentassertions.bUnit");
+    }
+    
+    [Fact]
+    public void ReturnAndConstraint()
+    {
+        var andConstraint = Render(@<a href="https://github.com/srpeirce/fluentassertions.bUnit">Link</a>)
+            .Should().HaveHref("https://github.com/srpeirce/fluentassertions.bUnit");
+
+        andConstraint.Should().BeOfType<AndConstraint<RenderedFragmentAssertions>>();
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute()
+    {
+        Action aut = () => Render(@<a>Link</a>)
+            .Should().HaveHref("https://github.com/srpeirce/fluentassertions.bUnit");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment to have attribute \"href\", but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<a>Link</a>)
+            .Should().HaveHref("https://github.com/srpeirce/fluentassertions.bUnit", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment to have attribute \"href\" because this is very important to Steve, but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue()
+    {
+        Action aut = () => Render(@<a href="#">Link</a>)
+            .Should().HaveHref("https://github.com/srpeirce/fluentassertions.bUnit");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment \"href\" attribute to have value \"https://github.com/srpeirce/fluentassertions.bUnit\", but found \"#\".");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<a href="#">Link</a>)
+            .Should().HaveHref("https://github.com/srpeirce/fluentassertions.bUnit", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment \"href\" attribute to have value \"https://github.com/srpeirce/fluentassertions.bUnit\" because this is very important to Steve, but found \"#\".");
+    }
+}

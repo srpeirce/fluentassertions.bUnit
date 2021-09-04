@@ -1,0 +1,65 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Theory]
+    [InlineData("nofollow")]
+    [InlineData("noopener")]
+    public void Succeed(string expected)
+    {
+        Render(@<a href="#" rel="nofollow noopener">Link</a>)
+            .Should().HaveRel(expected);
+    }
+    
+    [Theory]
+    [InlineData("nofollow")]
+    [InlineData("noopener")]
+    public void ReturnAndConstraint(string expected)
+    {
+        var andConstraint = Render(@<a href="#" rel="nofollow noopener">Link</a>)
+            .Should().HaveRel(expected);
+
+        andConstraint.Should().BeOfType<AndConstraint<RenderedFragmentAssertions>>();
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute()
+    {
+        Action aut = () => Render(@<a href="#">Link</a>)
+            .Should().HaveRel("nofollow");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment to have attribute \"rel\", but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<a href="#">Link</a>)
+            .Should().HaveRel("nofollow", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment to have attribute \"rel\" because this is very important to Steve, but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue()
+    {
+        Action aut = () => Render(@<a href="#" rel="nofollow">Link</a>)
+            .Should().HaveRel("noopener");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment \"rel\" [{\"nofollow\"}] to contain \"noopener\".");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<a href="#" rel="nofollow">Link</a>)
+            .Should().HaveRel("noopener", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment \"rel\" [{\"nofollow\"}] to contain \"noopener\" because this is very important to Steve.");
+    }
+}

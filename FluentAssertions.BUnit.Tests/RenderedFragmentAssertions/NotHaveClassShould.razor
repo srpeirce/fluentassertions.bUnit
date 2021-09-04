@@ -1,0 +1,48 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void Succeed()
+    {
+        Render(@<button class="btn big cta"><h1>Test</h1></button>)
+            .Should().NotHaveClass("btn-large");
+    }
+    
+    [Fact]
+    public void Succeed_WhenNoClassInMarkup()
+    {
+        Render(@<button><h1>Test</h1></button>)
+            .Should().NotHaveClass("btn-large");
+    }
+    
+    [Fact]
+    public void ReturnAndConstraint()
+    {
+        var andConstraint = Render(@<button class="btn big cta"><h1>Test</h1></button>)
+            .Should().NotHaveClass("btn-large");
+
+        andConstraint.Should().BeOfType<AndConstraint<RenderedFragmentAssertions>>();
+    }
+
+    [Fact]
+    public void ThrowException_WhenClassIsFound()
+    {
+        Action aut = () => Render(@<button class="btn btn-large big cta"><h1>Test</h1></button>)
+            .Should().NotHaveClass("btn-large");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected element.ClassList {\"btn\", \"btn-large\", \"big\", \"cta\"} to not contain \"btn-large\".");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenClassIsFound_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<button class="btn btn-large big cta"><h1>Test</h1></button>)
+            .Should().NotHaveClass("btn-large", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected element.ClassList {\"btn\", \"btn-large\", \"big\", \"cta\"} to not contain \"btn-large\" because this is very important to Steve.");
+    }
+}
