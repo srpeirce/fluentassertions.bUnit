@@ -10,7 +10,7 @@
         
         var returnedElement = element.ShouldHaveTarget("_blank");
 
-        returnedElement.Should().Be(element);
+        returnedElement.Should().BeSameAs(element);
     }
 
     [Fact]

@@ -1,0 +1,45 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void Succeed()
+    {
+        Render(@<button><h1>Test</h1></button>)
+            .AsElement()
+            .Should().HaveTag("button");
+    }
+    
+    [Fact]
+    public void ReturnAndConstraint()
+    {
+        var andConstraint = Render(@<button><h1>Test</h1></button>)
+            .AsElement()
+            .Should().HaveTag("button");
+
+        andConstraint.Should().BeOfType<AndConstraint<ElementAssertions>>();
+    }
+
+    [Fact]
+    public void ThrowException_WhenNotMatchExpected()
+    {
+        Action aut = () => Render(@<div><h1>Test</h1></div>)
+            .AsElement()
+            .Should().HaveTag("button");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement \"tag\" to be \"button\", but found \"div\".");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenTagNotMatchExpected_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<div><h1>Test</h1></div>)
+            .AsElement()
+            .Should().HaveTag("button", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement \"tag\" to be \"button\" because this is very important to Steve, but found \"div\".");
+    }
+}

@@ -1,0 +1,70 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Theory]
+    [InlineData("btn")]
+    [InlineData("big")]
+    [InlineData("cta")]
+    public void Succeed(string expectedClass)
+    {
+        Render(@<button Class="btn big cta"><h1>Test</h1></button>)
+            .AsElement()
+            .Should().HaveClass(expectedClass);
+    }
+    
+    [Fact]
+    public void ReturnAndConstraint()
+    {
+        var andConstraint = Render(@<button Class="btn big cta"><h1>Test</h1></button>)
+            .AsElement()
+            .Should().HaveClass("btn");
+
+        andConstraint.Should().BeOfType<AndConstraint<ElementAssertions>>();
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAnyClass()
+    {
+        Action aut = () => Render(@<button><h1>Test</h1></button>)
+            .AsElement()
+            .Should().HaveClass("btn");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected Subject.ClassList {empty} to contain \"btn\".");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAnyClass_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<button><h1>Test</h1></button>)
+            .AsElement()
+            .Should().HaveClass("btn", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected Subject.ClassList {empty} to contain \"btn\" because this is very important to Steve.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue()
+    {
+        Action aut = () => Render(@<button Class="btt big cta"><h1>Test</h1></button>)
+            .AsElement()
+            .Should().HaveClass("btn");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected Subject.ClassList {\"btt\", \"big\", \"cta\"} to contain \"btn\".");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<button Class="btt big cta"><h1>Test</h1></button>)
+            .AsElement()
+            .Should().HaveClass("btn", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected Subject.ClassList {\"btt\", \"big\", \"cta\"} to contain \"btn\" because this is very important to Steve.");
+    }
+}

@@ -10,7 +10,7 @@
         
         var returnedElement = element.ShouldHaveAlt("Logo");
 
-        returnedElement.Should().Be(element);
+        returnedElement.Should().BeSameAs(element);
     }
 
     [Fact]

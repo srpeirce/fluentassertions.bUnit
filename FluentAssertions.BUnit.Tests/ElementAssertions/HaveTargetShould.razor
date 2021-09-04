@@ -1,0 +1,67 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void Succeed()
+    {
+        Render(@<a href="#" target="_blank">Link</a>)
+            .AsElement()
+            .Should().HaveTarget("_blank");
+    }
+    
+    [Fact]
+    public void ReturnAndConstraint()
+    {
+        var andConstraint = Render(@<a href="#" target="_blank">Link</a>)
+            .AsElement()
+            .Should().HaveTarget("_blank");
+
+        andConstraint.Should().BeOfType<AndConstraint<ElementAssertions>>();
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute()
+    {
+        Action aut = () => Render(@<a href="#" >Link</a>)
+            .AsElement()
+            .Should().HaveTarget("_blank");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement to have attribute \"target\", but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenDoesNotHaveAttribute_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<a href="#">Link</a>)
+            .AsElement()
+            .Should().HaveTarget("_blank", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement to have attribute \"target\" because this is very important to Steve, but found <null>.");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue()
+    {
+        Action aut = () => Render(@<a href="#" target="_self">Link</a>)
+            .AsElement()
+            .Should().HaveTarget("_blank");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement \"target\" attribute to have value \"_blank\", but found \"_self\".");
+    }
+    
+    [Fact]
+    public void ThrowException_WhenHasAttributeWithWrongValue_AndShouldIncludeBecauseMessage()
+    {
+        Action aut = () => Render(@<a href="#" target="_self">Link</a>)
+            .AsElement()
+            .Should().HaveTarget("_blank", "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IElement \"target\" attribute to have value \"_blank\" because this is very important to Steve, but found \"_self\".");
+    }
+}
