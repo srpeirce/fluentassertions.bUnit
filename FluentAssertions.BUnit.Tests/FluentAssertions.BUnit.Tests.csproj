@@ -24,4 +24,5 @@
     <ItemGroup>
       <ProjectReference Include="..\FluentAssertions.BUnit\FluentAssertions.BUnit.csproj" />
     </ItemGroup>
+    
 </Project>

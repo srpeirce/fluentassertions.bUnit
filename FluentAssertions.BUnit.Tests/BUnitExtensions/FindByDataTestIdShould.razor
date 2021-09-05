@@ -9,7 +9,7 @@
 
         var element = renderedFragment.FindByDataTestId("my-button");
 
-        element.ShouldHaveDataTestId("my-button");
+        element.Should().HaveDataTestId("my-button");
         element.MarkupMatches(@<button data-test-id="my-button">Click me</button>);
     }
     
@@ -20,7 +20,7 @@
 
         var element = renderedFragment.FindByDataTestId("my-button");
 
-        element.ShouldHaveDataTestId("my-button");
+        element.Should().HaveDataTestId("my-button");
         element.MarkupMatches(@<button data-test-id="my-button">Click me</button>);
     }
     
@@ -34,7 +34,7 @@
 
         var element = renderedFragment.FindByDataTestId("my-button");
 
-        element.ShouldHaveDataTestId("my-button");
+        element.Should().HaveDataTestId("my-button");
         element.MarkupMatches(@<button data-test-id="my-button">Click me 1</button>);
     }
     
