@@ -1,0 +1,77 @@
+@using Xunit.Sdk
+@inherits Bunit.TestContext
+
+@code {
+    
+    [Fact]
+    public void Succeed_WhenMatchingByString()
+    {
+        Render(@<button><h1>Test</h1></button>)
+            .Should().HaveMarkup("<button><h1>Test</h1></button>");
+    }
+    
+    [Fact]
+    public void Succeed_WhenMatchingByRenderFragment()
+    {
+        Render(@<button><h1>Test</h1></button>)
+            .Should().HaveMarkup(@<button><h1>Test</h1></button>);
+    }
+    
+    [Fact]
+    public void ReturnAndConstraint_WhenMatchingByString()
+    {
+        var andConstraint = Render(@<button><h1>Test</h1></button>)
+            .Should().HaveMarkup("<button><h1>Test</h1></button>");
+
+        andConstraint.Should().BeOfType<AndConstraint<RenderedFragmentAssertions>>();
+    }
+    
+    [Fact]
+    public void ReturnAndConstraint_WhenMatchingByRenderFragment()
+    {
+        var andConstraint = Render(@<button><h1>Test</h1></button>)
+            .Should().HaveMarkup(@<button><h1>Test</h1></button>);
+
+        andConstraint.Should().BeOfType<AndConstraint<RenderedFragmentAssertions>>();
+    }
+
+    [Fact]
+    public void ThrowException_WhenChildMarkupDoesNotMatch_AndMatchingByString()
+    {
+        Action aut = () => Render(@<button><h2>Test</h2></button>)
+            .Should().HaveMarkup("<button><h1>Test</h1></button>");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment markup \n\"<button><h1>Test</h1></button>\", \nbut found \n\"<button>\r\n  <h2>Test</h2>\r\n</button>\".");
+    }
+
+    [Fact]
+    public void ThrowException_WhenChildMarkupDoesNotMatch_AndMatchingByRenderFragment()
+    {
+        Action aut = () => Render(@<button><h2>Test</h2></button>)
+            .Should().HaveMarkup(@<button><h1>Test</h1></button>);
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment markup \n\"<button><h1>Test</h1></button>\", \nbut found \n\"<button>\r\n  <h2>Test</h2>\r\n</button>\".");
+    }
+    
+    [Fact]
+    public void ThrowException_AndIncludeBecauseMessage_WhenChildMarkupDoesNotMatch_AndMatchingByString()
+    {
+        Action aut = () => Render(@<button><h2>Test</h2></button>)
+            .Should().HaveMarkup("<button><h1>Test</h1></button>", "this is very important to {0}", "Steve");;
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment markup \n\"<button><h1>Test</h1></button>\" because this is very important to Steve, \nbut found \n\"<button>\r\n  <h2>Test</h2>\r\n</button>\".");
+    }
+    
+    [Fact]
+    public void ThrowException_AndIncludeBecauseMessage_WhenChildMarkupDoesNotMatch_AndMatchingByRenderFragment()
+    {
+        Action aut = () => Render(@<button><h2>Test</h2></button>)
+            .Should().HaveMarkup(@<button><h1>Test</h1></button>, "this is very important to {0}", "Steve");
+
+        aut.Should().Throw<XunitException>()
+            .And.UserMessage.Should().Be("Expected IRenderedFragment markup \n\"<button><h1>Test</h1></button>\" because this is very important to Steve, \nbut found \n\"<button>\r\n  <h2>Test</h2>\r\n</button>\".");
+    }
+}

@@ -103,6 +103,49 @@ namespace FluentAssertions.BUnit
             return new AndConstraint<TAssertions>((TAssertions)this);
         }
         
+        public AndConstraint<TAssertions> HaveMarkup(RenderFragment expected, string because = "", params object[] becauseArgs)
+        {
+            bool doesMarkupMatch;
+        
+            try
+            {
+                Subject.MarkupMatches(expected);
+                doesMarkupMatch = true;
+            }
+            catch
+            {
+                doesMarkupMatch = false;
+            }
+            
+            Execute.Assertion
+                .BecauseOf(because, becauseArgs)
+                .ForCondition(doesMarkupMatch)
+                .FailWith("Expected {context:IRenderedFragment} markup \n{0}{reason}, \nbut found \n{1}.", _testContext.Render(expected).Markup, Subject.AsElement().ToMarkup().TrimStart());
+            return new AndConstraint<TAssertions>((TAssertions)this);
+        }
+        
+        public AndConstraint<TAssertions> HaveMarkup(string expected, string because = "", params object[] becauseArgs)
+        {
+            bool doesMarkupMatch;
+        
+            try
+            {
+                Subject.MarkupMatches(expected);
+                doesMarkupMatch = true;
+            }
+            catch
+            {
+                doesMarkupMatch = false;
+            }
+            
+            Execute.Assertion
+                .BecauseOf(because, becauseArgs)
+                .ForCondition(doesMarkupMatch)
+                .FailWith("Expected {context:IRenderedFragment} markup \n{0}{reason}, \nbut found \n{1}.", expected, Subject.AsElement().ToMarkup().TrimStart());
+        
+            return new AndConstraint<TAssertions>((TAssertions)this);
+        }
+        
         public AndConstraint<TAssertions> NotHaveClass(string expected, string because = "", params object[] becauseArgs)
         {
             var element = Subject.AsElement();
