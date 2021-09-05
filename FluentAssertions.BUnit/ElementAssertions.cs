@@ -119,7 +119,7 @@ namespace FluentAssertions.BUnit
             Execute.Assertion
                 .BecauseOf(because, becauseArgs)
                 .ForCondition(doesMarkupMatch)
-                .FailWith("Expected {context:IElement} markup \n{0}{reason}, \nbut found \n{1}.", _testContext.Render(expected).Markup, Subject.ToMarkup().TrimStart());
+                .FailWith("Expected {context:IElement} markup {0}{reason}, but found {1}.", _testContext.Render(expected).Markup, Subject.ToMarkup());
                 return new AndConstraint<TAssertions>((TAssertions)this);
         }
         
@@ -140,7 +140,7 @@ namespace FluentAssertions.BUnit
             Execute.Assertion
                 .BecauseOf(because, becauseArgs)
                 .ForCondition(doesMarkupMatch)
-                .FailWith("Expected {context:IElement} markup \n{0}{reason}, \nbut found \n{1}.", expected, Subject.ToMarkup().TrimStart());
+                .FailWith("Expected {context:IElement} markup {0}{reason}, but found {1}.", expected, Subject.ToMarkup());
         
             return new AndConstraint<TAssertions>((TAssertions)this);
         }
