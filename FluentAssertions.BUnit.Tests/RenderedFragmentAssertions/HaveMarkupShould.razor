@@ -42,7 +42,7 @@
             .Should().HaveMarkup("<button><h1>Test</h1></button>");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment markup \n\"<button><h1>Test</h1></button>\", \nbut found \n\"<button>\r\n  <h2>Test</h2>\r\n</button>\".");
+            .And.UserMessage.Should().BeEquivalentTo("Expected IRenderedFragment markup \"<button><h1>Test</h1></button>\", but found \"<button><h2>Test</h2></button>\".");
     }
 
     [Fact]
@@ -52,7 +52,7 @@
             .Should().HaveMarkup(@<button><h1>Test</h1></button>);
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment markup \n\"<button><h1>Test</h1></button>\", \nbut found \n\"<button>\r\n  <h2>Test</h2>\r\n</button>\".");
+            .And.UserMessage.Should().BeEquivalentTo("Expected IRenderedFragment markup \"<button><h1>Test</h1></button>\", but found \"<button><h2>Test</h2></button>\".");
     }
     
     [Fact]
@@ -62,7 +62,7 @@
             .Should().HaveMarkup("<button><h1>Test</h1></button>", "this is very important to {0}", "Steve");;
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment markup \n\"<button><h1>Test</h1></button>\" because this is very important to Steve, \nbut found \n\"<button>\r\n  <h2>Test</h2>\r\n</button>\".");
+            .And.UserMessage.Should().BeEquivalentTo("Expected IRenderedFragment markup \"<button><h1>Test</h1></button>\" because this is very important to Steve, but found \"<button><h2>Test</h2></button>\".");
     }
     
     [Fact]
@@ -72,6 +72,6 @@
             .Should().HaveMarkup(@<button><h1>Test</h1></button>, "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment markup \n\"<button><h1>Test</h1></button>\" because this is very important to Steve, \nbut found \n\"<button>\r\n  <h2>Test</h2>\r\n</button>\".");
+            .And.UserMessage.Should().BeEquivalentTo("Expected IRenderedFragment markup \"<button><h1>Test</h1></button>\" because this is very important to Steve, but found \"<button><h2>Test</h2></button>\".");
     }
 }
