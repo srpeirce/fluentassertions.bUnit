@@ -1,22 +1,22 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
-    
+
     [Fact]
-    public void SucceedWhenOfType()
+    public void SucceedWhenComparingToSameReference()
     {
         var renderedFragment = Render(@<img src="/logo.png" alt="Logo">);
-        
+
         renderedFragment
-            .Should().BeOfType(renderedFragment.GetType());
+            .Should().BeSameAs(renderedFragment);
     }
-    
+
     [Fact]
-    public void ThrowExceptionWhenNotOfType()
+    public void ThrowExceptionWhenComparingToAnotherReference()
     {
         Action aut = () => Render(@<img src="/logo.png" alt="Logo">)
-            .Should().BeOfType<IRenderedFragment>();
+            .Should().BeSameAs(Render(@<img src="/logo.png" alt="Logo">));
 
         aut.Should().Throw<XunitException>();
     }

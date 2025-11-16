@@ -1,15 +1,15 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
-    
+
     [Fact]
     public void SucceedWhenAssignable()
     {
         Render(@<img src="/logo.png" alt="Logo">)
             .Should().NotBeAssignableTo<string>();
     }
-    
+
     [Fact]
     public void ThrowExceptionWhenNotAssignable()
     {

@@ -1,24 +1,29 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
-    
+
     [Fact]
     public void Succeed()
     {
         Render(@<img src="/logo.png" alt="Logo">)
             .Should().HaveSrc("/logo.png");
     }
-    
+
     [Fact]
     public void ReturnAndConstraint()
     {
         var andConstraint = Render(@<img src="/logo.png" alt="Logo">)
             .Should().HaveSrc("/logo.png");
 
-        andConstraint.Should().BeOfType<AndConstraint<RenderedFragmentAssertions>>();
+        var constraintType = andConstraint.GetType();
+        constraintType.IsGenericType.Should().BeTrue();
+        constraintType.GetGenericTypeDefinition().Should().Be(typeof(AndConstraint<>));
+        var assertionType = constraintType.GetGenericArguments()[0];
+        assertionType.IsGenericType.Should().BeTrue();
+        assertionType.GetGenericTypeDefinition().Should().Be(typeof(RenderedFragmentAssertions<>));
     }
-    
+
     [Fact]
     public void ThrowException_WhenDoesNotHaveAttribute()
     {
@@ -26,9 +31,9 @@
             .Should().HaveSrc("/logo.png");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment to have attribute \"src\", but found <null>.");
+            .And.Message.Should().Be("Expected IRenderedComponent to have attribute \"src\", but found <null>.");
     }
-    
+
     [Fact]
     public void ThrowException_WhenDoesNotHaveAttribute_AndShouldIncludeBecauseMessage()
     {
@@ -36,9 +41,9 @@
             .Should().HaveSrc("/logo.png", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment to have attribute \"src\" because this is very important to Steve, but found <null>.");
+            .And.Message.Should().Be("Expected IRenderedComponent to have attribute \"src\" because this is very important to Steve, but found <null>.");
     }
-    
+
     [Fact]
     public void ThrowException_WhenHasAttributeWithWrongValue()
     {
@@ -46,9 +51,9 @@
             .Should().HaveSrc("/logo.png");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment \"src\" attribute to have value \"/logo.png\", but found \"/loog.png\".");
+            .And.Message.Should().Be("Expected IRenderedComponent \"src\" attribute to have value \"/logo.png\", but found \"/loog.png\".");
     }
-    
+
     [Fact]
     public void ThrowException_WhenHasAttributeWithWrongValue_AndShouldIncludeBecauseMessage()
     {
@@ -56,6 +61,6 @@
             .Should().HaveSrc("/logo.png", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment \"src\" attribute to have value \"/logo.png\" because this is very important to Steve, but found \"/loog.png\".");
+            .And.Message.Should().Be("Expected IRenderedComponent \"src\" attribute to have value \"/logo.png\" because this is very important to Steve, but found \"/loog.png\".");
     }
 }

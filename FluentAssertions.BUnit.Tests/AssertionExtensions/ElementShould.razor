@@ -1,4 +1,4 @@
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
     
@@ -10,6 +10,6 @@
             
         var elementAssertions = element.Should();
         
-        elementAssertions.Should().BeOfType<ElementAssertions>();
+        elementAssertions.GetType().Should().Be(typeof(ElementAssertions));
     }
 }

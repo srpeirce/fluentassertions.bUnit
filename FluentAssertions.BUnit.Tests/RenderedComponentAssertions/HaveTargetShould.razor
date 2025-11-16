@@ -1,34 +1,39 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
-    
+
     [Fact]
     public void Succeed()
     {
         Render(@<a href="#" target="_blank">Link</a>)
             .Should().HaveTarget("_blank");
     }
-    
+
     [Fact]
     public void ReturnAndConstraint()
     {
         var andConstraint = Render(@<a href="#" target="_blank">Link</a>)
             .Should().HaveTarget("_blank");
 
-        andConstraint.Should().BeOfType<AndConstraint<RenderedFragmentAssertions>>();
+        var constraintType = andConstraint.GetType();
+        constraintType.IsGenericType.Should().BeTrue();
+        constraintType.GetGenericTypeDefinition().Should().Be(typeof(AndConstraint<>));
+        var assertionType = constraintType.GetGenericArguments()[0];
+        assertionType.IsGenericType.Should().BeTrue();
+        assertionType.GetGenericTypeDefinition().Should().Be(typeof(RenderedFragmentAssertions<>));
     }
-    
+
     [Fact]
     public void ThrowException_WhenDoesNotHaveAttribute()
     {
-        Action aut = () => Render(@<a href="#" >Link</a>)
+        Action aut = () => Render(@<a href="#">Link</a>)
             .Should().HaveTarget("_blank");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment to have attribute \"target\", but found <null>.");
+            .And.Message.Should().Be("Expected IRenderedComponent to have attribute \"target\", but found <null>.");
     }
-    
+
     [Fact]
     public void ThrowException_WhenDoesNotHaveAttribute_AndShouldIncludeBecauseMessage()
     {
@@ -36,9 +41,9 @@
             .Should().HaveTarget("_blank", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment to have attribute \"target\" because this is very important to Steve, but found <null>.");
+            .And.Message.Should().Be("Expected IRenderedComponent to have attribute \"target\" because this is very important to Steve, but found <null>.");
     }
-    
+
     [Fact]
     public void ThrowException_WhenHasAttributeWithWrongValue()
     {
@@ -46,9 +51,9 @@
             .Should().HaveTarget("_blank");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment \"target\" attribute to have value \"_blank\", but found \"_self\".");
+            .And.Message.Should().Be("Expected IRenderedComponent \"target\" attribute to have value \"_blank\", but found \"_self\".");
     }
-    
+
     [Fact]
     public void ThrowException_WhenHasAttributeWithWrongValue_AndShouldIncludeBecauseMessage()
     {
@@ -56,6 +61,6 @@
             .Should().HaveTarget("_blank", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment \"target\" attribute to have value \"_blank\" because this is very important to Steve, but found \"_self\".");
+            .And.Message.Should().Be("Expected IRenderedComponent \"target\" attribute to have value \"_blank\" because this is very important to Steve, but found \"_self\".");
     }
 }

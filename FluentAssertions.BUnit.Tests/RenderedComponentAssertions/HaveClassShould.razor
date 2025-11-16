@@ -1,8 +1,8 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
-    
+
     [Theory]
     [InlineData("btn")]
     [InlineData("big")]
@@ -12,16 +12,21 @@
         Render(@<button Class="btn big cta"><h1>Test</h1></button>)
             .Should().HaveClass(expectedClass);
     }
-    
+
     [Fact]
     public void ReturnAndConstraint()
     {
         var andConstraint = Render(@<button Class="btn big cta"><h1>Test</h1></button>)
             .Should().HaveClass("btn");
 
-        andConstraint.Should().BeOfType<AndConstraint<RenderedFragmentAssertions>>();
+        var constraintType = andConstraint.GetType();
+        constraintType.IsGenericType.Should().BeTrue();
+        constraintType.GetGenericTypeDefinition().Should().Be(typeof(AndConstraint<>));
+        var assertionType = constraintType.GetGenericArguments()[0];
+        assertionType.IsGenericType.Should().BeTrue();
+        assertionType.GetGenericTypeDefinition().Should().Be(typeof(RenderedFragmentAssertions<>));
     }
-    
+
     [Fact]
     public void ThrowException_WhenDoesNotHaveAnyClass()
     {
@@ -29,9 +34,9 @@
             .Should().HaveClass("btn");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected element.ClassList {empty} to contain \"btn\".");
+            .And.Message.Should().Be("Expected element.ClassList {empty} to contain \"btn\".");
     }
-    
+
     [Fact]
     public void ThrowException_WhenDoesNotHaveAnyClass_AndShouldIncludeBecauseMessage()
     {
@@ -39,9 +44,9 @@
             .Should().HaveClass("btn", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected element.ClassList {empty} to contain \"btn\" because this is very important to Steve.");
+            .And.Message.Should().Be("Expected element.ClassList {empty} to contain \"btn\" because this is very important to Steve.");
     }
-    
+
     [Fact]
     public void ThrowException_WhenHasAttributeWithWrongValue()
     {
@@ -49,9 +54,9 @@
             .Should().HaveClass("btn");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected element.ClassList {\"btt\", \"big\", \"cta\"} to contain \"btn\".");
+            .And.Message.Should().Be("Expected element.ClassList {\"btt\", \"big\", \"cta\"} to contain \"btn\".");
     }
-    
+
     [Fact]
     public void ThrowException_WhenHasAttributeWithWrongValue_AndShouldIncludeBecauseMessage()
     {
@@ -59,6 +64,6 @@
             .Should().HaveClass("btn", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected element.ClassList {\"btt\", \"big\", \"cta\"} to contain \"btn\" because this is very important to Steve.");
+            .And.Message.Should().Be("Expected element.ClassList {\"btt\", \"big\", \"cta\"} to contain \"btn\" because this is very important to Steve.");
     }
 }

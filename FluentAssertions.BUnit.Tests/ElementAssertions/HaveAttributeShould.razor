@@ -1,8 +1,8 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
-    
+
     [Fact]
     public void Succeed()
     {
@@ -10,7 +10,7 @@
             .AsElement()
             .Should().HaveAttribute("alt", "Logo");
     }
-    
+
     [Fact]
     public void ReturnAndConstraint()
     {
@@ -18,7 +18,10 @@
             .AsElement()
             .Should().HaveAttribute("alt", "Logo");
 
-        andConstraint.Should().BeOfType<AndConstraint<ElementAssertions>>();
+        var constraintType = andConstraint.GetType();
+        constraintType.IsGenericType.Should().BeTrue();
+        constraintType.GetGenericTypeDefinition().Should().Be(typeof(AndConstraint<>));
+        constraintType.GetGenericArguments()[0].Should().BeSameAs(typeof(ElementAssertions));
     }
 
     [Fact]
@@ -29,9 +32,9 @@
             .Should().HaveAttribute("alt", "Logo");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IElement to have attribute \"alt\", but found <null>.");
+            .And.Message.Should().Be("Expected IElement to have attribute \"alt\", but found <null>.");
     }
-    
+
     [Fact]
     public void ThrowException_WhenDoesNotHaveAttribute_AndShouldIncludeBecauseMessage()
     {
@@ -40,9 +43,9 @@
             .Should().HaveAttribute("alt", "Logo", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IElement to have attribute \"alt\" because this is very important to Steve, but found <null>.");
+            .And.Message.Should().Be("Expected IElement to have attribute \"alt\" because this is very important to Steve, but found <null>.");
     }
-    
+
     [Fact]
     public void ThrowException_WhenHasAttributeWithWrongValue()
     {
@@ -51,9 +54,9 @@
             .Should().HaveAttribute("alt", "Logo");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IElement \"alt\" attribute to have value \"Logo\", but found \"Log\".");
+            .And.Message.Should().Be("Expected IElement \"alt\" attribute to have value \"Logo\", but found \"Log\".");
     }
-    
+
     [Fact]
     public void ThrowException_WhenHasAttributeWithWrongValue_AndShouldIncludeBecauseMessage()
     {
@@ -62,6 +65,6 @@
             .Should().HaveAttribute("alt", "Logo", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IElement \"alt\" attribute to have value \"Logo\" because this is very important to Steve, but found \"Log\".");
+            .And.Message.Should().Be("Expected IElement \"alt\" attribute to have value \"Logo\" because this is very important to Steve, but found \"Log\".");
     }
 }
