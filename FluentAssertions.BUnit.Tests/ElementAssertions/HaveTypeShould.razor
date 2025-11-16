@@ -1,5 +1,5 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
     
@@ -18,7 +18,10 @@
             .AsElement()
             .Should().HaveType("button");
 
-        andConstraint.Should().BeOfType<AndConstraint<ElementAssertions>>();
+        var constraintType = andConstraint.GetType();
+        constraintType.IsGenericType.Should().BeTrue();
+        constraintType.GetGenericTypeDefinition().Should().Be(typeof(AndConstraint<>));
+        constraintType.GetGenericArguments()[0].Should().BeSameAs(typeof(ElementAssertions));
     }
     
     [Fact]
@@ -29,7 +32,7 @@
             .Should().HaveType("button");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IElement to have attribute \"type\", but found <null>.");
+            .And.Message.Should().Be("Expected IElement to have attribute \"type\", but found <null>.");
     }
     
     [Fact]
@@ -40,7 +43,7 @@
             .Should().HaveType("button", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IElement to have attribute \"type\" because this is very important to Steve, but found <null>.");
+            .And.Message.Should().Be("Expected IElement to have attribute \"type\" because this is very important to Steve, but found <null>.");
     }
     
     [Fact]
@@ -51,7 +54,7 @@
             .Should().HaveType("button");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IElement \"type\" attribute to have value \"button\", but found \"reset\".");
+            .And.Message.Should().Be("Expected IElement \"type\" attribute to have value \"button\", but found \"reset\".");
     }
     
     [Fact]
@@ -62,6 +65,6 @@
             .Should().HaveType("button", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IElement \"type\" attribute to have value \"button\" because this is very important to Steve, but found \"reset\".");
+            .And.Message.Should().Be("Expected IElement \"type\" attribute to have value \"button\" because this is very important to Steve, but found \"reset\".");
     }
 }

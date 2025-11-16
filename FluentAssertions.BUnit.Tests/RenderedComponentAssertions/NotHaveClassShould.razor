@@ -1,29 +1,34 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
-    
+
     [Fact]
     public void Succeed()
     {
         Render(@<button class="btn big cta"><h1>Test</h1></button>)
             .Should().NotHaveClass("btn-large");
     }
-    
+
     [Fact]
     public void Succeed_WhenNoClassInMarkup()
     {
         Render(@<button><h1>Test</h1></button>)
             .Should().NotHaveClass("btn-large");
     }
-    
+
     [Fact]
     public void ReturnAndConstraint()
     {
         var andConstraint = Render(@<button class="btn big cta"><h1>Test</h1></button>)
             .Should().NotHaveClass("btn-large");
 
-        andConstraint.Should().BeOfType<AndConstraint<RenderedFragmentAssertions>>();
+        var constraintType = andConstraint.GetType();
+        constraintType.IsGenericType.Should().BeTrue();
+        constraintType.GetGenericTypeDefinition().Should().Be(typeof(AndConstraint<>));
+        var assertionType = constraintType.GetGenericArguments()[0];
+        assertionType.IsGenericType.Should().BeTrue();
+        assertionType.GetGenericTypeDefinition().Should().Be(typeof(RenderedFragmentAssertions<>));
     }
 
     [Fact]
@@ -33,9 +38,9 @@
             .Should().NotHaveClass("btn-large");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected element.ClassList {\"btn\", \"btn-large\", \"big\", \"cta\"} to not contain \"btn-large\".");
+            .And.Message.Should().Be("Expected element.ClassList {\"btn\", \"btn-large\", \"big\", \"cta\"} to not contain \"btn-large\".");
     }
-    
+
     [Fact]
     public void ThrowException_WhenClassIsFound_AndShouldIncludeBecauseMessage()
     {
@@ -43,6 +48,6 @@
             .Should().NotHaveClass("btn-large", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected element.ClassList {\"btn\", \"btn-large\", \"big\", \"cta\"} to not contain \"btn-large\" because this is very important to Steve.");
+            .And.Message.Should().Be("Expected element.ClassList {\"btn\", \"btn-large\", \"big\", \"cta\"} to not contain \"btn-large\" because this is very important to Steve.");
     }
 }

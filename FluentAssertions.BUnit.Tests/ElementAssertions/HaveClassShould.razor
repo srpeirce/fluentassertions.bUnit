@@ -1,5 +1,5 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
     
@@ -21,7 +21,10 @@
             .AsElement()
             .Should().HaveClass("btn");
 
-        andConstraint.Should().BeOfType<AndConstraint<ElementAssertions>>();
+        var constraintType = andConstraint.GetType();
+        constraintType.IsGenericType.Should().BeTrue();
+        constraintType.GetGenericTypeDefinition().Should().Be(typeof(AndConstraint<>));
+        constraintType.GetGenericArguments()[0].Should().BeSameAs(typeof(ElementAssertions));
     }
     
     [Fact]
@@ -32,7 +35,7 @@
             .Should().HaveClass("btn");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected Subject.ClassList {empty} to contain \"btn\".");
+            .And.Message.Should().Be("Expected Subject.ClassList {empty} to contain \"btn\".");
     }
     
     [Fact]
@@ -43,7 +46,7 @@
             .Should().HaveClass("btn", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected Subject.ClassList {empty} to contain \"btn\" because this is very important to Steve.");
+            .And.Message.Should().Be("Expected Subject.ClassList {empty} to contain \"btn\" because this is very important to Steve.");
     }
     
     [Fact]
@@ -54,7 +57,7 @@
             .Should().HaveClass("btn");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected Subject.ClassList {\"btt\", \"big\", \"cta\"} to contain \"btn\".");
+            .And.Message.Should().Be("Expected Subject.ClassList {\"btt\", \"big\", \"cta\"} to contain \"btn\".");
     }
     
     [Fact]
@@ -65,6 +68,6 @@
             .Should().HaveClass("btn", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected Subject.ClassList {\"btt\", \"big\", \"cta\"} to contain \"btn\" because this is very important to Steve.");
+            .And.Message.Should().Be("Expected Subject.ClassList {\"btt\", \"big\", \"cta\"} to contain \"btn\" because this is very important to Steve.");
     }
 }

@@ -1,15 +1,15 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
-    
+
     [Fact]
     public void SucceedWhenOfType()
     {
         Render(@<img src="/logo.png" alt="Logo">)
-            .Should().NotBeOfType<IRenderedFragment>();
+            .Should().NotBeOfType<object>();
     }
-    
+
     [Fact]
     public void ThrowExceptionWhenNotOfType()
     {

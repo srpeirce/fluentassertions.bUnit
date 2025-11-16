@@ -1,8 +1,8 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
-    
+
     [Fact]
     public void SucceedWhenAssignable()
     {
@@ -10,7 +10,7 @@
             .AsElement()
             .Should().BeAssignableTo<IElement>();
     }
-    
+
     [Fact]
     public void ThrowExceptionWhenNotAssignable()
     {

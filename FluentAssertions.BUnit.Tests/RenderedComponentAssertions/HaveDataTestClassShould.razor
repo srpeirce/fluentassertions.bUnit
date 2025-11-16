@@ -1,24 +1,29 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
-    
+
     [Fact]
     public void Succeed()
     {
         Render(@<button data-test-class="magic-button">Click Me</button>)
             .Should().HaveDataTestClass("magic-button");
     }
-    
+
     [Fact]
     public void ReturnAndConstraint()
     {
         var andConstraint = Render(@<button data-test-class="magic-button">Click Me</button>)
             .Should().HaveDataTestClass("magic-button");
 
-        andConstraint.Should().BeOfType<AndConstraint<RenderedFragmentAssertions>>();
+        var constraintType = andConstraint.GetType();
+        constraintType.IsGenericType.Should().BeTrue();
+        constraintType.GetGenericTypeDefinition().Should().Be(typeof(AndConstraint<>));
+        var assertionType = constraintType.GetGenericArguments()[0];
+        assertionType.IsGenericType.Should().BeTrue();
+        assertionType.GetGenericTypeDefinition().Should().Be(typeof(RenderedFragmentAssertions<>));
     }
-    
+
     [Fact]
     public void ThrowException_WhenDoesNotHaveAttribute()
     {
@@ -26,9 +31,9 @@
             .Should().HaveDataTestClass("magic-button");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment to have attribute \"data-test-class\", but found <null>.");
+            .And.Message.Should().Be("Expected IRenderedComponent to have attribute \"data-test-class\", but found <null>.");
     }
-    
+
     [Fact]
     public void ThrowException_WhenDoesNotHaveAttribute_AndShouldIncludeBecauseMessage()
     {
@@ -36,9 +41,9 @@
             .Should().HaveDataTestClass("magic-button", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment to have attribute \"data-test-class\" because this is very important to Steve, but found <null>.");
+            .And.Message.Should().Be("Expected IRenderedComponent to have attribute \"data-test-class\" because this is very important to Steve, but found <null>.");
     }
-    
+
     [Fact]
     public void ThrowException_WhenHasAttributeWithWrongValue()
     {
@@ -46,9 +51,9 @@
             .Should().HaveDataTestClass("magic-button");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment \"data-test-class\" attribute to have value \"magic-button\", but found \"magic-btn\".");
+            .And.Message.Should().Be("Expected IRenderedComponent \"data-test-class\" attribute to have value \"magic-button\", but found \"magic-btn\".");
     }
-    
+
     [Fact]
     public void ThrowException_WhenHasAttributeWithWrongValue_AndShouldIncludeBecauseMessage()
     {
@@ -56,6 +61,6 @@
             .Should().HaveDataTestClass("magic-button", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment \"data-test-class\" attribute to have value \"magic-button\" because this is very important to Steve, but found \"magic-btn\".");
+            .And.Message.Should().Be("Expected IRenderedComponent \"data-test-class\" attribute to have value \"magic-button\" because this is very important to Steve, but found \"magic-btn\".");
     }
 }

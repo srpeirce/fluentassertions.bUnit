@@ -1,8 +1,8 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
-    
+
     [Fact]
     public void Succeed()
     {
@@ -10,7 +10,7 @@
             .AsElement()
             .Should().HaveTag("button");
     }
-    
+
     [Fact]
     public void ReturnAndConstraint()
     {
@@ -18,7 +18,10 @@
             .AsElement()
             .Should().HaveTag("button");
 
-        andConstraint.Should().BeOfType<AndConstraint<ElementAssertions>>();
+        var constraintType = andConstraint.GetType();
+        constraintType.IsGenericType.Should().BeTrue();
+        constraintType.GetGenericTypeDefinition().Should().Be(typeof(AndConstraint<>));
+        constraintType.GetGenericArguments()[0].Should().BeSameAs(typeof(ElementAssertions));
     }
 
     [Fact]
@@ -29,9 +32,9 @@
             .Should().HaveTag("button");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IElement \"tag\" to be \"button\", but found \"div\".");
+            .And.Message.Should().Be("Expected IElement \"tag\" to be \"button\", but found \"div\".");
     }
-    
+
     [Fact]
     public void ThrowException_WhenTagNotMatchExpected_AndShouldIncludeBecauseMessage()
     {
@@ -40,6 +43,6 @@
             .Should().HaveTag("button", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IElement \"tag\" to be \"button\" because this is very important to Steve, but found \"div\".");
+            .And.Message.Should().Be("Expected IElement \"tag\" to be \"button\" because this is very important to Steve, but found \"div\".");
     }
 }

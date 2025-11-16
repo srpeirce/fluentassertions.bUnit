@@ -1,18 +1,18 @@
 ﻿using AngleSharp.Dom;
 using Bunit;
 
-namespace FluentAssertions.BUnit
+namespace FluentAssertions.BUnit;
+
+public static class AssertionExtensions
 {
-    public static class AssertionExtensions
+    public static RenderedFragmentAssertions<TComponent> Should<TComponent>(this IRenderedComponent<TComponent> actualValue)
+        where TComponent : Microsoft.AspNetCore.Components.IComponent
     {
-        public static RenderedFragmentAssertions Should(this IRenderedFragment actualValue)
-        {
-            return new RenderedFragmentAssertions(actualValue);
-        }
-        
-        public static ElementAssertions Should(this IElement actualValue)
-        {
-            return new ElementAssertions(actualValue);
-        }
+        return new RenderedFragmentAssertions<TComponent>(actualValue);
+    }
+    
+    public static ElementAssertions Should(this IElement actualValue)
+    {
+        return new ElementAssertions(actualValue);
     }
 }

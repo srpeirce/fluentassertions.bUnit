@@ -1,4 +1,4 @@
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
     
@@ -9,6 +9,7 @@
             
         var renderedFragmentAssertion = renderedFragment.Should();
         
-        renderedFragmentAssertion.Should().BeOfType<RenderedFragmentAssertions>();
+        renderedFragmentAssertion.GetType().IsGenericType.Should().BeTrue();
+        renderedFragmentAssertion.GetType().GetGenericTypeDefinition().Should().Be(typeof(RenderedFragmentAssertions<>));
     }
 }

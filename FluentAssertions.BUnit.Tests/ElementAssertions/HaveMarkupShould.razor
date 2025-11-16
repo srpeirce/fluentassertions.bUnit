@@ -1,5 +1,5 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
     
@@ -26,7 +26,10 @@
             .AsElement()
             .Should().HaveMarkup("<button><h1>Test</h1></button>");
 
-        andConstraint.Should().BeOfType<AndConstraint<ElementAssertions>>();
+        var constraintType = andConstraint.GetType();
+        constraintType.IsGenericType.Should().BeTrue();
+        constraintType.GetGenericTypeDefinition().Should().Be(typeof(AndConstraint<>));
+        constraintType.GetGenericArguments()[0].Should().BeSameAs(typeof(ElementAssertions));
     }
     
     [Fact]
@@ -36,7 +39,10 @@
             .AsElement()
             .Should().HaveMarkup(@<button><h1>Test</h1></button>);
 
-        andConstraint.Should().BeOfType<AndConstraint<ElementAssertions>>();
+        var constraintType = andConstraint.GetType();
+        constraintType.IsGenericType.Should().BeTrue();
+        constraintType.GetGenericTypeDefinition().Should().Be(typeof(AndConstraint<>));
+        constraintType.GetGenericArguments()[0].Should().BeSameAs(typeof(ElementAssertions));
     }
 
     [Fact]
@@ -47,7 +53,7 @@
             .Should().HaveMarkup("<button><h1>Test</h1></button>");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be($"Expected IElement markup \"<button><h1>Test</h1></button>\", but found \"{Environment.NewLine}<button>{Environment.NewLine}  <h2>Test</h2>{Environment.NewLine}</button>\".");
+            .And.Message.Should().Be("Expected IElement markup \"<button><h1>Test</h1></button>\", but found \"<button><h2>Test</h2></button>\".");
     }
 
     [Fact]
@@ -58,7 +64,7 @@
             .Should().HaveMarkup(@<button><h1>Test</h1></button>);
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be($"Expected IElement markup \"<button><h1>Test</h1></button>\", but found \"{Environment.NewLine}<button>{Environment.NewLine}  <h2>Test</h2>{Environment.NewLine}</button>\".");
+            .And.Message.Should().Be("Expected IElement markup \"<button><h1>Test</h1></button>\", but found \"<button><h2>Test</h2></button>\".");
     }
     
     [Fact]
@@ -69,7 +75,7 @@
             .Should().HaveMarkup("<button><h1>Test</h1></button>", "this is very important to {0}", "Steve");;
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be($"Expected IElement markup \"<button><h1>Test</h1></button>\" because this is very important to Steve, but found \"{Environment.NewLine}<button>{Environment.NewLine}  <h2>Test</h2>{Environment.NewLine}</button>\".");
+            .And.Message.Should().Be("Expected IElement markup \"<button><h1>Test</h1></button>\" because this is very important to Steve, but found \"<button><h2>Test</h2></button>\".");
     }
     
     [Fact]
@@ -80,6 +86,6 @@
             .Should().HaveMarkup(@<button><h1>Test</h1></button>, "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be($"Expected IElement markup \"<button><h1>Test</h1></button>\" because this is very important to Steve, but found \"{Environment.NewLine}<button>{Environment.NewLine}  <h2>Test</h2>{Environment.NewLine}</button>\".");
+            .And.Message.Should().Be("Expected IElement markup \"<button><h1>Test</h1></button>\" because this is very important to Steve, but found \"<button><h2>Test</h2></button>\".");
     }
 }

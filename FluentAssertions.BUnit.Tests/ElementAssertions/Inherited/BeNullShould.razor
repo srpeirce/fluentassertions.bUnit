@@ -1,16 +1,16 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
-    
+
     [Fact]
     public void SucceedWhenNull()
     {
         IElement e = null;
-        
+
         e.Should().BeNull();
     }
-    
+
     [Fact]
     public void ThrowExceptionWhenNotNull()
     {

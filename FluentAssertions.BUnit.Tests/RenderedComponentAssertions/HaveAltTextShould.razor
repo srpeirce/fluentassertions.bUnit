@@ -1,22 +1,27 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
-    
+
     [Fact]
     public void Succeed()
     {
         Render(@<img src="/logo.png" alt="Logo">)
             .Should().HaveAltText("Logo");
     }
-    
+
     [Fact]
     public void ReturnAndConstraint()
     {
         var andConstraint = Render(@<img src="/logo.png" alt="Logo">)
             .Should().HaveAltText("Logo");
 
-        andConstraint.Should().BeOfType<AndConstraint<RenderedFragmentAssertions>>();
+        var constraintType = andConstraint.GetType();
+        constraintType.IsGenericType.Should().BeTrue();
+        constraintType.GetGenericTypeDefinition().Should().Be(typeof(AndConstraint<>));
+        var assertionType = constraintType.GetGenericArguments()[0];
+        assertionType.IsGenericType.Should().BeTrue();
+        assertionType.GetGenericTypeDefinition().Should().Be(typeof(RenderedFragmentAssertions<>));
     }
 
     [Fact]
@@ -26,9 +31,9 @@
             .Should().HaveAltText("Logo");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment to have attribute \"alt\", but found <null>.");
+            .And.Message.Should().Be("Expected IRenderedComponent to have attribute \"alt\", but found <null>.");
     }
-    
+
     [Fact]
     public void ThrowException_WhenDoesNotHaveAttribute_AndShouldIncludeBecauseMessage()
     {
@@ -36,9 +41,9 @@
             .Should().HaveAltText("Logo", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment to have attribute \"alt\" because this is very important to Steve, but found <null>.");
+            .And.Message.Should().Be("Expected IRenderedComponent to have attribute \"alt\" because this is very important to Steve, but found <null>.");
     }
-    
+
     [Fact]
     public void ThrowException_WhenHasAttributeWithWrongValue()
     {
@@ -46,9 +51,9 @@
             .Should().HaveAltText("Logo");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment \"alt\" attribute to have value \"Logo\", but found \"Log\".");
+            .And.Message.Should().Be("Expected IRenderedComponent \"alt\" attribute to have value \"Logo\", but found \"Log\".");
     }
-    
+
     [Fact]
     public void ThrowException_WhenHasAttributeWithWrongValue_AndShouldIncludeBecauseMessage()
     {
@@ -56,6 +61,6 @@
             .Should().HaveAltText("Logo", "this is very important to {0}", "Steve");
 
         aut.Should().Throw<XunitException>()
-            .And.UserMessage.Should().Be("Expected IRenderedFragment \"alt\" attribute to have value \"Logo\" because this is very important to Steve, but found \"Log\".");
+            .And.Message.Should().Be("Expected IRenderedComponent \"alt\" attribute to have value \"Logo\" because this is very important to Steve, but found \"Log\".");
     }
 }

@@ -1,15 +1,15 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
-    
+
     [Fact]
     public void SucceedWhenMatches()
     {
         Render(@<img src="/logo.png" alt="Logo">)
             .Should().Match(rf => rf.Markup.Contains("img"));
     }
-    
+
     [Fact]
     public void ThrowExceptionWhenDoesNotMatch()
     {

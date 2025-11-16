@@ -1,16 +1,16 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
-    
+
     [Fact]
     public void SucceedWhenNull()
     {
-        IRenderedFragment f = null;
-        
+        var f = (IRenderedComponent<Microsoft.AspNetCore.Components.IComponent>)null;
+
         f.Should().BeNull();
     }
-    
+
     [Fact]
     public void ThrowExceptionWhenNotNull()
     {

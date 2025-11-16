@@ -1,14 +1,14 @@
 @using Xunit.Sdk
-@inherits Bunit.TestContext
+@inherits Bunit.BunitContext
 
 @code {
-    
+
     [Fact]
     public void SucceedWhenComparingToSameReference()
     {
         var element = Render(@<img src="/logo.png" alt="Logo">)
             .AsElement();
-        
+
         element
             .Should().BeSameAs(element);
     }
